@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<body>
+<style>
+  h1 {
+    color: #37aabf;
+    margin-left: 40%;
+    font-size: 50px;
+    animation-name: example;
+    animation-duration: 6s;
+    animation-iteration-count: infinite;
+  }
+
+  th {
+    color: #37aabf;
+  }
+
+  @keyframes example {
+    0% {
+      color: purple;
+    }
+    25% {
+      color: blue;
+    }
+  }
+
+  button {
+    background-color: #37aabf;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    -webkit-transition-duration: 0.4s;
+    transition-duration: 0.4s;
+  }
+
+  button:hover {
+    box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+  }
+  form {
+    text-align: center;
+  }
+</style>
+<h1>All Events</h1>
+<form method="get">
+    <div>
+      <label for="location">Location:</label>
+      <input type="text" id="location" name="location">
+    </div>
+    <div>
+      <label for="venue">Venue:</label>
+      <input type="text" id="venue" name="venue">
+    </div>
+    <div>
+      <label for="sort">Sort By:</label>
+      <select id="sort" name="sort">
+        <option value="date">Date</option>
+        <option value="popularity">Popularity</option>
+        <option value="creation_time">Creation Time</option>
+      </select>
+    </div>
+    <button type="submit">Apply Filters</button>
+  </form>
+<a href="{% url 'app:calendar' %}"><button type="button" class="btn btn-primary mx-2">Return</button></a>
+<table border='1'>
+  <tr>
+    <th>Title</th>
+    <th>Description</th>
+    <th>Location</th>
+    <th>Venue</th>
+    <th>Date</th>
+    <th>Popularity</th>
+    <th>Creation time</th>
+  </tr>
+  {% for event in events %}
+    <tr>
+      <td>{{ event.title }}</td>
+      <td>{{ event.description }}</td>
+      <td>{{ event.location }}</td>
+      <td>{{ event.venue }}</td>
+      <td>{{ event.start_time|date:'Y-m-d H:i:s' }}</td>
+      <td>{{ event.popularity }}</td>
+      <td>{{ event.creation_time|date:'Y-m-d H:i:s' }}</td>
+      <hr>
+    </tr>
+  {% endfor %}
+</table>
+<script>
+  {% for event in events %}
+      var eventTime = new Date("{{ event.start_time|date:'Y-m-d' }}T{{ event.start_time|date:'H:i:s' }}");
+      var currentTime = new Date("{{ current_time|date:'Y-m-d' }}T{{ current_time|date:'H:i:s' }}");
+      console.log("Event Time:", eventTime);
+      console.log("Current Time:", currentTime);
+      var timeDiff = Math.abs(eventTime - currentTime);
+      var minutesDiff = Math.floor(timeDiff / 60000); // converting milliseconds to minutes
+      console.log("Time Difference in Minutes:", minutesDiff);
+      if (minutesDiff <= 30) {
+          var formattedEventTime = eventTime.toLocaleString();
+          alert('Event Reminder: Event {{ event.title }} starts at ' + formattedEventTime);
+      }
+  {% endfor %}
+</script>
+</body>
+</html>
